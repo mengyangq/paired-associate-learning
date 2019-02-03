@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Informed Consent Form</title>
+    <link rel="stylesheet" href="/study_assets/pal/css/consent_form.css" />
+    <script src="/assets/javascripts/jatos.js"></script>
+    <script src="/study_assets/pal/libs/jquery-3.1.1.min.js"></script>
+    <meta charset="UTF-8" />
+</head>
+
+<body>
+                <div id="consent">
+                <h1 align=center>We need your consent to proceed</h1>
+                <hr />
+                <p>
+                    Thank you for accepting the task. You have been invited to take part in a research study named <strong>Word Pair Learning</strong>.
+                    </p>
+                <p>
+                    Please read this consent agreement carefully before deciding whether to participate in this study.
+                    </p>
+                <br>
+                <div class="legal well">
+                    <h2 align=center>Consent Form</h3>
+
+                    <hr>
+
+                    <p><strong>Purpose of the research:</strong></p>
+
+                    <p>The purpose of this study is to investigate how linguistic experience and contextual information of a word influence its forming associations with other words. The results of this study may help us develop better test items in word-pair learning task in neuropsychological tests.   </p>
+
+                    <p><strong>Eligibility:</strong></p>
+
+                    <p>A. <font color="red">Please ONLY participate ONCE.</font> DO NOT participate in this task if you have previously done it. If you have already participated, your work will be rejected and you WILL NOT be paid. (You can find out if you've participated previously by checking your account settings.)</p>
+
+                    <p>B. <font color="red">Please ONLY participate in this study if you are a native speaker of <strong>American English</strong>.</font> If American English is not your first language, you are NOT elligible for this study.</p>
+
+                    <p>C. Please ONLY participate in this study if you are 18 years of age or older.</p>
+
+                    <p><strong>What you will do in this research:</strong></p>
+
+                    <p>You will be asked to learn word pairs and then recall those word pairs. There will be a practice trial with 5 word-pairs and four experimental trials with 10 word-pairs each.</p>
+
+                    <p>The study should take no more than 17 minutes.</p>
+
+                    <p><strong>Risks and benefits:</strong></p>
+
+                    <p>There are no known risks associated with your participation in this research beyond those of everyday life. Although you will receive no direct benefits, this research may help the investigator explore the role of linguistic experience and contextual information in word processing. </p>
+
+                    <p><strong>Compensation:</strong></p>
+
+                    <p>You will be paid $1.84 to participate in the study.</p>
+
+                    <p><strong>Confidentiality:</strong></p>
+
+                    <p>The data you provide will be anonymous. That is, it is recorded such that not even the person collecting and storing it would ever be able to associate your data with your identity.</p>
+
+                    <p><strong>Participation and withdrawal:</strong></p>
+
+                    <p>Your participation in this study is completely voluntary, and you may withdraw at any time without penalty or loss of benefit to which you may otherwise be entitled.</p>
+
+                    <p><strong>Contact:</strong></p>
+
+                    <p>If there is anything about the study or your participation that is unclear or that you do not understand, or if you have other questions or wish to report a research-related problem, you may contact Mengyang Qiu at:</p>
+
+                        <ul>
+                        mengyang@buffalo.edu
+                        </ul>
+
+                    <p>You can also contact our lab at:</p>
+                    
+                    <ul>
+                        ublanmemlab@gmail.com
+                    </ul>
+
+                        <ul>
+                        104A Cary Hall
+                        <br>
+                        University at Buffalo
+                        <br>
+                        Buffalo, NY 14214
+                        </ul>
+
+                    <p>The faculty member supervising this work is Brendan Johns, Ph.D. (btjohns@buffalo.edu).</p>
+
+                    <p>This research has been reviewed and approved by an Institutional Review Board (“IRB”). You may talk to them at (716) 888-4888 or email ub-irb@buffalo.edu if:</p>
+
+                        <ul>
+                        You have questions about your rights as a participant in this research
+                        <br>
+                        Your questions, concerns, or complaints are not being answered by the research team
+                        <br>
+                        You cannot reach the research team
+                        <br>
+                        You want to talk to someone besides the research team
+                        <br>
+                        You want to get information or provide input about this research
+                        </ul>
+
+                    <hr>
+    <div id="buttons">
+        <button id="agreeButton">I agree</button>
+        <button id="cancelButton">Cancel</button>
+    </div>
+
+    <script type="text/javascript">
+        jatos.onLoad(function() {
+            $("#buttons").show();
+        });
+
+        $('#agreeButton').click(function() {
+            var result = "Consent given.";
+            jatos.submitResultData(result, jatos.startNextComponent);
+        });
+
+        $('#cancelButton').click(function() {
+            jatos.abortStudy("Consent not given.");
+        });
+    </script>
+</body>
+
+</html>

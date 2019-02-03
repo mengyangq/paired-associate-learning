@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Experiment</title>
+        <script src="/study_assets/pal/libs/jsPsych/jspsych.js"></script>
+        <script src="/assets/javascripts/jatos.js"></script>  
+        <script src="/study_assets/pal/libs/jsPsych/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="/study_assets/pal/libs/jsPsych/plugins/jspsych-fullscreen.js"></script>
+        <script src="/study_assets/pal/libs/jsPsych/plugins/jspsych-survey-text.js"></script>
+        <link rel="stylesheet" href="/study_assets/pal/libs/jsPsych/css/jspsych.css"></link>
+
+    </head>
+<body></body>
+<script>
+    /* Shuffle array items */
+    Array.prototype.shuffle = function() {
+        var input = this;
+
+        for (var i = input.length-1; i >=0; i--) {
+
+            var randomIndex = Math.floor(Math.random()*(i+1)); 
+            var itemAtIndex = input[randomIndex]; 
+
+            input[randomIndex] = input[i]; 
+            input[i] = itemAtIndex;
+        }
+        return input;
+    }  
+
+
+    /* Generate 4 random lists of word pairs */
+    var practice_list = ["lead ---- pencil","lock ---- door","school ---- grocery","jury ---- eagle","dig ---- guilty"];
+    var practice_words = ["lead","lock","school","jury","dig"]; 
+    var practice_pairs = {"lead":"pencil","lock":"door","school":"grocery","jury":"eagle","dig":"guilty"};
+    practice_words.shuffle();  
+
+    var ohigh = ["cigarette","trip","cheek","sweat","color","jacket","entrance","hospital","mountain","horror"];
+    ohigh.shuffle();
+    var olow = ["library","lawyer","engine","commander","lake","blade","hood","university","aunt","secretary"];
+    olow.shuffle();
+    var olist1 = ohigh.slice(0,5);
+    var olist2 = ohigh.slice(5,10);
+    olist1 = olist1.concat(olow.slice(0,5));
+    olist2 = olist2.concat(olow.slice(5,10));
+    olist1.shuffle();
+    olist2.shuffle();
+    var opair = ["chain","wound","terror","clock","card","wave","whisper","bird","dirt","van","roll","crime","dance","silk","prison","style","department","appearance","grave","club"];
+    opair.shuffle();
+    opair1 = opair.slice(0,10);
+    opair2 = opair.slice(10,20);
+    var opresent1 = {};
+    var opresent2 = {};
+    for(let i=0;i<10; i++){
+        opresent1[olist1[i]] = opair1[i];
+        opresent2[olist2[i]] = opair2[i];
+    };
+
+    var yhigh = ["chin","pleasure","nature","shell","pile","spring","band","dawn","laughter","flash"];
+    yhigh.shuffle();
+    var ylow = ["cabin","professor","spear","wolf","milk","chief","truck","ash","valley","plane"];
+    ylow.shuffle();
+    var ylist1 = yhigh.slice(0,5);
+    var ylist2 = yhigh.slice(5,10);
+    ylist1 = ylist1.concat(ylow.slice(0,5));
+    ylist2 = ylist2.concat(ylow.slice(5,10));
+    ylist1.shuffle();
+    ylist2.shuffle();
+    var ypair = ["crystal","cell","team","country","station","plate","map","park","letter","cloth","beach","meal","bar","beard","soldier","arrow","mud","princess","kid","coat"];
+    ypair.shuffle();
+    ypair1 = ypair.slice(0,10);
+    ypair2 = ypair.slice(10,20);
+    var ypresent1 = {};
+    var ypresent2 = {};
+    for(let i=0;i<10; i++){
+        ypresent1[ylist1[i]] = ypair1[i];
+        ypresent2[ylist2[i]] = ypair2[i];
+    }; 
+
+    var fourlists = [];
+    fourlists.push(opresent1,opresent2,ypresent1,ypresent2);
+    fourlists.shuffle();
+
+    /*console.log(JSON.stringify(fourlists[0])); 
+    console.log(JSON.stringify(fourlists[1])); 
+    console.log(JSON.stringify(fourlists[2])); 
+    console.log(JSON.stringify(fourlists[3])); */  
+
+
+    /* create timeline */
+    var timeline = [];  
+
+
+    /* define welcome message trial */
+    var welcome_block = {
+        type: "html-keyboard-response",
+        stimulus: "<p style='font-size:32px;'>Welcome to the word pair learning experiment. </p> <p>In this experiment, you are asked to learn 4 lists of word pairs (e.g., 'cat ---- dog'). Each list contains 10 word pairs. There is a training phase and a test phase for each list. <big><u>In the training phase, each word pair will appear on screen <strong>TWICE</strong> in random order. Each time, the word pair will stay on screen for <strong>1.5 seconds</strong>.</u></big> Please pay attention and try your best to memorize those pairs. In the test phase, you will be provided with one test word at a time and you need to enter the other word in the pair that <u>you've learned in the training phase</u>.</p><p>Before the four experimental trials, let's do a practice trial first, which contains 5 word pairs. Please press the 'Space' key to continue to the practice trial.</p>",
+        choices:[32,13]
+    };
+    timeline.push(welcome_block);
+
+
+    var fullscreen_trial = {
+        type: 'fullscreen',
+        fullscreen_mode: true
+    };
+    timeline.push(fullscreen_trial);
+
+    var start_practice = {
+        type: "html-keyboard-response",
+        stimulus: "<p style='font-size:60px;'>Practice Trial Training</p><p>Press the 'Space' key to begin.</p>",
+        choices:[32,13]
+    };
+    timeline.push(start_practice);
+
+    var fixation = {
+        type: 'html-keyboard-response',
+        stimulus: '<div style="font-size:60px;">+</div>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 1000,
+    };
+
+    var training = {
+        type: 'html-keyboard-response',
+        stimulus:jsPsych.timelineVariable('stimulus'),
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 1500,
+    };
+
+    var practice_stimuli = [];
+    for(let i=0;i<5; i++){
+        practice_stimuli.push({stimulus:['<p style="text-align:center; font-size:60px;">'+practice_list[i]+'</p>']})
+    };
+
+    var practice_procedure = {
+        timeline: [fixation, training],
+        timeline_variables: practice_stimuli,
+        repetitions: 2,
+        randomize_order: true
+    };
+    timeline.push(practice_procedure);
+
+    var practice_test = {
+        type: "html-keyboard-response",
+        stimulus: "<p style='font-size:60px;'>Practice Trial Test</p><p>Press the 'Space' key to begin.</p>",
+        choices:[32,13]
+    };
+    timeline.push(practice_test);
+
+
+
+    var practice_results = {};
+    for (let i=0;i<5; i++){
+
+        var questions = [];
+        questions.push({prompt:['<p style="text-align:center; font-size:50px;">'+practice_words[i]+'</p>'],value:'', rows: 1, columns: 15});
+        var survey_block = {
+            type: 'survey-text',
+            questions: questions,
+            preamble:'Please enter the word associated with the word below :',
+            on_finish: function(){
+                var answer = jsPsych.data.getLastTrialData().select('responses');
+                var values = answer['values'];
+                obj = JSON.parse(values);
+		var answer_word = obj.Q0;
+                answer_word = (answer_word.toLowerCase()).replace(/\W/g, '');
+                practice_results[practice_words[i]]=answer_word;
+            }
+        }          
+        timeline.push(survey_block);
+    }
+
+    var practice_end = {
+        type: "html-keyboard-response",
+        stimulus: "<p>Great! You've finished the practice trial. Now let's continue to the experiment.</p> <p>Press the 'Space' key to continue.</p>",
+        choices:[32,13]
+    };
+    timeline.push(practice_end);
+
+
+    var start_trial1 = {
+        type: "html-keyboard-response",
+        stimulus: "<p style='font-size:60px;'>Trial 1 Training</p><p>Please try your best to memorize the word pairs.</p><p>Press the 'Space' key to begin.</p>",
+        choices:[32,13]
+    };
+    timeline.push(start_trial1);
+
+
+    var trial1_stimuli = [];
+    for(let i=0;i<10; i++){
+        var w1 = Object.keys(fourlists[0])[i];
+        var w2 = Object.values(fourlists[0])[i];
+        trial1_stimuli.push({stimulus:['<p style="text-align:center; font-size:60px;">'+w1+' ---- '+w2+'</p>']})
+    };
+
+
+    var trial1_procedure = {
+        timeline: [fixation, training],
+        timeline_variables: trial1_stimuli,
+        repetitions: 2,
+        randomize_order: true,
+    };
+    timeline.push(trial1_procedure);
+
+    var trial1_test = {
+        type: "html-keyboard-response",
+        stimulus: "<p style='font-size:60px;'>Trial 1 Test</p><p>Press the 'Space' key to begin.</p>",
+        choices:[32,13]
+    };
+    timeline.push(trial1_test); 
+
+    var trial1_results = {};
+    var trial1_correct = {};
+    for (let i=0;i<10; i++){
+        var questions = [];
+        questions.push({prompt:['<p style="text-align:center; font-size:50px;">'+Object.keys(fourlists[0])[i]+'</p>'],value:'', rows: 1, columns: 15});
+        var survey_block = {
+            type: 'survey-text',
+            questions: questions,
+            preamble:'Please enter the word associated with the word below :',
+            on_finish: function(){
+                var answer = jsPsych.data.getLastTrialData().select('responses');
+                var values = answer['values'];
+                obj = JSON.parse(values);
+                var answer_word = obj.Q0;
+                answer_word = (answer_word.toLowerCase()).replace(/\W/g, '');
+                trial1_results[Object.keys(fourlists[0])[i]]=answer_word;
+                if (answer_word == Object.values(fourlists[0])[i]){
+                    trial1_correct[Object.keys(fourlists[0])[i]]=1;
+                }else{
+                    trial1_correct[Object.keys(fourlists[0])[i]]=0;
+                }
+            }          
+        };
+        timeline.push(survey_block);
+    };  
+
+    var start_trial2 = {
+        type: "html-keyboard-response",
+        stimulus: "<p style='font-size:60px;'>Trial 2 Training</p><p>Please try your best to memorize the word pairs.</p><p>Press the 'Space' key to begin.</p>",
+        choices:[32,13]
+    };
+    timeline.push(start_trial2);
+
+
+    var trial2_stimuli = [];
+    for(let i=0;i<10; i++){
+        var w1 = Object.keys(fourlists[1])[i];
+        var w2 = Object.values(fourlists[1])[i];
+        trial2_stimuli.push({stimulus:['<p style="text-align:center; font-size:60px;">'+w1+' ---- '+w2+'</p>']})
+    };
+
+    
+    var trial2_procedure = {
+        timeline: [fixation, training],
+        timeline_variables: trial2_stimuli,
+        repetitions: 2,
+        randomize_order: true,
+         
+    };
+    timeline.push(trial2_procedure);
+
+    var trial2_test = {
+        type: "html-keyboard-response",
+        stimulus: "<p style='font-size:60px;'>Trial 2 Test</p><p>Press the 'Space' key to begin.</p>",
+        choices:[32,13]
+    };
+    timeline.push(trial2_test); 
+
+    var trial2_results = {};
+    var trial2_correct = {};
+    for (let i=0;i<10; i++){
+        var questions = [];
+        questions.push({prompt:['<p style="text-align:center; font-size:50px;">'+Object.keys(fourlists[1])[i]+'</p>'],value:'', rows: 1, columns: 15});
+        var survey_block = {
+            type: 'survey-text',
+            questions: questions,
+            preamble:'Please enter the word associated with the word below :',
+            on_finish: function(){
+                var answer = jsPsych.data.getLastTrialData().select('responses');
+                var values = answer['values'];
+                obj = JSON.parse(values);
+                var answer_word = obj.Q0;
+                answer_word = (answer_word.toLowerCase()).replace(/\W/g, '');
+                trial2_results[Object.keys(fourlists[1])[i]]=answer_word;
+                if (answer_word == Object.values(fourlists[1])[i]){
+                    trial2_correct[Object.keys(fourlists[1])[i]]=1;
+                }else{
+                    trial2_correct[Object.keys(fourlists[1])[i]]=0;
+                }
+            }          
+        };
+        timeline.push(survey_block);
+    };  
+
+    var half_end = {
+        type: "html-keyboard-response",
+        stimulus: "<p>Great! You've finished two experimental trials. You can have a short break if you want.</p><p>Press the 'Space' key to continue to the last two trials if you're ready.</p>",
+        choices:[32,13]
+    };
+    timeline.push(half_end);
+
+
+    var start_trial3 = {
+        type: "html-keyboard-response",
+        stimulus: "<p style='font-size:60px;'>Trial 3 Training</p><p>Please try your best to memorize the word pairs.</p><p>Press the 'Space' key to begin.</p>",
+        choices:[32,13]
+    };
+    timeline.push(start_trial3);
+
+    var trial3_stimuli = [];
+    for(let i=0;i<10; i++){
+        var w1 = Object.keys(fourlists[2])[i];
+        var w2 = Object.values(fourlists[2])[i];
+        trial3_stimuli.push({stimulus:['<p style="text-align:center; font-size:60px;">'+w1+' ---- '+w2+'</p>']})
+    };
+
+    
+    var trial3_procedure = {
+        timeline: [fixation, training],
+        timeline_variables: trial3_stimuli,
+        repetitions: 2,
+        randomize_order: true,
+        
+    };
+    timeline.push(trial3_procedure);
+
+    var trial3_test = {
+        type: "html-keyboard-response",
+        stimulus: "<p style='font-size:60px;'>Trial 3 Test</p><p>Press the 'Space' key to begin.</p>",
+        choices:[32,13]
+    };
+    timeline.push(trial3_test); 
+
+    var trial3_results = {};
+    var trial3_correct = {};
+    for (let i=0;i<10; i++){
+        var questions = [];
+        questions.push({prompt:['<p style="text-align:center; font-size:50px;">'+Object.keys(fourlists[2])[i]+'</p>'],value:'', rows: 1, columns: 15});
+        var survey_block = {
+            type: 'survey-text',
+            questions: questions,
+            preamble:'Please enter the word associated with the word below :',
+            on_finish: function(){
+                var answer = jsPsych.data.getLastTrialData().select('responses');
+                var values = answer['values'];
+                obj = JSON.parse(values);
+                var answer_word = obj.Q0;
+                answer_word = (answer_word.toLowerCase()).replace(/\W/g, '');
+                trial3_results[Object.keys(fourlists[2])[i]]=answer_word;
+                if (answer_word == Object.values(fourlists[2])[i]){
+                    trial3_correct[Object.keys(fourlists[2])[i]]=1;
+                }else{
+                    trial3_correct[Object.keys(fourlists[2])[i]]=0;
+                }
+            }          
+        };
+        timeline.push(survey_block);
+    };  
+
+    var start_trial4 = {
+        type: "html-keyboard-response",
+        stimulus: "<p style='font-size:60px;'>Trial 4 Training</p><p>Please try your best to memorize the word pairs.</p><p>Press the 'Space' key to begin.</p>",
+        choices:[32,13]
+    };
+    timeline.push(start_trial4);
+
+    var trial4_stimuli = [];
+    for(let i=0;i<10; i++){
+        var w1 = Object.keys(fourlists[3])[i];
+        var w2 = Object.values(fourlists[3])[i];
+        trial4_stimuli.push({stimulus:['<p style="text-align:center; font-size:60px;">'+w1+' ---- '+w2+'</p>']})
+    };
+
+    
+    var trial4_procedure = {
+        timeline: [fixation, training],
+        timeline_variables: trial4_stimuli,
+        repetitions: 2,
+        randomize_order: true,
+        
+    };
+    timeline.push(trial4_procedure);
+
+    var trial4_test = {
+        type: "html-keyboard-response",
+        stimulus: "<p style='font-size:60px;'>Trial 4 Test</p><p>Press the 'Space' key to begin.</p>",
+        choices:[32,13]
+    };
+    timeline.push(trial4_test); 
+
+    var trial4_results = {};
+    var trial4_correct = {};
+    for (let i=0;i<10; i++){
+        var questions = [];
+        questions.push({prompt:['<p style="text-align:center; font-size:50px;">'+Object.keys(fourlists[3])[i]+'</p>'],value:'', rows: 1, columns: 15});
+        var survey_block = {
+            type: 'survey-text',
+            questions: questions,
+            preamble:'Please enter the word associated with the word below :',
+            on_finish: function(){
+                var answer = jsPsych.data.getLastTrialData().select('responses');
+                var values = answer['values'];
+                obj = JSON.parse(values);
+                var answer_word = obj.Q0;
+                answer_word = (answer_word.toLowerCase()).replace(/\W/g, '');
+                trial4_results[Object.keys(fourlists[3])[i]]=answer_word;
+                if (answer_word == Object.values(fourlists[3])[i]){
+                    trial4_correct[Object.keys(fourlists[3])[i]]=1;
+                }else{
+                    trial4_correct[Object.keys(fourlists[3])[i]]=0;
+                }
+            }          
+        };
+        timeline.push(survey_block);
+    }; 
+
+    
+    var trials_results = [];
+    trials_results.push(trial1_results,trial2_results,trial3_results,trial4_results);
+    var trials_correct = [];
+    trials_correct.push(trial1_correct,trial2_correct,trial3_correct,trial4_correct);
+    var practice = {};
+    practice["practice"]= practice_results;
+    var training = {};
+    training["training"] = fourlists;
+    var testing = {};
+    testing["testing"] = trials_results;
+    var correctness = {};
+    correctness["correctness"] = trials_correct;
+
+    var fullscreen_trial_exit = {
+        type: 'fullscreen',
+        fullscreen_mode: false
+    }
+    timeline.push(fullscreen_trial_exit);
+
+    /* start the experiment */
+    jatos.onLoad(function() {  
+        jsPsych.init({
+            timeline: timeline,
+            on_finish: function() {
+
+                jatos.submitResultData(JSON.stringify(practice)+'\n'+JSON.stringify(training)+'\n'+JSON.stringify(testing)+'\n'+JSON.stringify(correctness)+'\n',jatos.endStudy());
+
+                var win = window.open('thanks.html', '_blank');
+                win.focus();
+
+
+            }
+
+
+        });
+    });
+</script>
+</html>

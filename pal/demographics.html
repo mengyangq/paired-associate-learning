@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="/study_assets/pal/libs/jquery-3.1.1.min.js"></script>
+    <script src="/study_assets/pal/libs/survey-jquery/survey.jquery.js"></script>
+    <script src="/assets/javascripts/jatos.js"></script>
+    <link rel="stylesheet" href="/study_assets/pal/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/study_assets/pal/css/study.css"> 
+
+</head>
+
+<body>
+    <h3 align=center>Please enter your Prolific ID and some demographic information.</h3>
+    <div id="demographics"></div>
+    
+
+    <script>
+        jatos.onLoad(function () {
+
+            Survey.Survey.cssType = "bootstrap";
+            Survey.defaultBootstrapCss.navigationButton = "btn btn-green";
+
+            window.survey = new Survey.Model({
+                pages: [{
+                    questions: [{
+                            name: "ID",
+                            type: "text",
+                            title: "Your Prolific ID:",
+                            isRequired: true
+                        },
+                        {
+                            name: "age",
+                            type: "text",
+                            title: "Your age (please enter a number):",
+                            isRequired: true
+                        },
+                        {
+                            type: "dropdown",
+                            name: "edu",
+                            title: "Your education level (If you’re currently enrolled in school, please indicate the highest degree you have received):",
+                            isRequired: true,
+                            colCount: 0,
+                            choices: jatos.componentJsonInput.edu,
+                            isRequired: true
+                        }
+                        ]
+                        }
+                    ]
+                });
+
+            survey.onComplete.add(function (result) {
+                $("#demographics").hide(); // Hides the 'Thank you for completing ...' message
+                jatos.submitResultData(JSON.stringify(result.data), jatos.startNextComponent);
+            });
+            $("#demographics").Survey({
+                model: survey
+            });
+        });
+    </script>
+</body>
+
+</html>
