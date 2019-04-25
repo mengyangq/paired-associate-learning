@@ -1,2 +1,2 @@
-# The Effects of Semantic Diversity on Paired-Associate Learning
+# Effects of Semantic Diversity on Paired-Associate Learning
 Continued Evidence for the Information Accumulation Perspective of Cognitive Aging
